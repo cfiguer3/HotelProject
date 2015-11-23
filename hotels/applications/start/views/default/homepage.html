@@ -1,0 +1,41 @@
+{{extend 'layout.html'}}
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<h1>Hotel Finder</h1>
+    <div class="boardListing">
+        <h2>Slug hotel</h2>
+        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
+        {{=A('view',_href=URL('default', 'hotelrooms'))}}
+    </div>
+    <br>
+    <div class="boardListing">
+        <h2>Beach INN</h2>
+        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
+        {{=A('view',_href=URL('default', 'hotelrooms'))}}
+    </div>
+    <br>
+    <div class="boardListing">
+        <h2>Downtown hotel</h2>
+        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
+        {{=A('view',_href=URL('default', 'hotelrooms'))}}
+    </div>
+
+</script>
+
+<script>
+$(function() {
+    // Ractive object
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+
+        },
+    });
+});
+
+</script>

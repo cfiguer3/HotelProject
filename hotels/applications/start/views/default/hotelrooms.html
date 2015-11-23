@@ -1,0 +1,34 @@
+{{extend 'layout.html'}}
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<h1>Hotel</h1>
+    <div class="boardListing">
+        <h2></h2>
+    </div>
+    <br>
+    <div class="boardListing">
+        <h2></h2>
+    </div>
+    <br>
+    <div class="boardListing">
+        <h2></h2>
+    </div>
+
+</script>
+
+<script>
+$(function() {
+    // Ractive object
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+
+        },
+    });
+});
+</script>
