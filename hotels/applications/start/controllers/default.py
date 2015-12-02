@@ -8,8 +8,7 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 #########################################################################
 
-
-def homepage():
+def hotelrooms():
 
     return dict()
 
@@ -19,24 +18,33 @@ def checkout():
     return dict()
 
 
-def hotelrooms():
+def homepage():
+    form = SQLFORM(db.Hotels)
+    form.add_button('Cancel', URL('default', 'homepage'))
+    if form.process().accepted:
+        session.flash = T('data was inserted')
+        redirect(URL('default', 'homepage'))
+    elif form.errors:
+        response.flash = 'form has errors'
+    hotel_list = db(db.Hotels).select(orderby=db.Hotels.Name)
+    return dict(hotel_list=hotel_list, form=form)
 
-    return dict()
+
 
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
-
-    if you need a simple wiki simply replace the two lines below with:
-    return auth.wiki()
-    """
-    logger.info("Here we are, in the controller.")
-    response.flash = T("Hello World")
-    return dict(message=T('Welcome to web2py!'))
+    form = SQLFORM(db.Hotels)
+    form.add_button('Cancel', URL('default', 'homepage'))
+    if form.process().accepted:
+        session.flash = T('data was inserted')
+        redirect(URL('default', 'homepage'))
+    elif form.errors:
+        response.flash = 'form has errors'
+    hotel_list = db(db.Hotels).select(orderby=db.Hotels.Name)
+    return dict(hotel_list=hotel_list, form=form)
 
 
 def user():
+
     """
     exposes:
     http://..../[app]/default/user/login
@@ -73,4 +81,9 @@ def call():
     """
     return service()
 
+
+def refresh():
+    db(db.Hotels.id > 0).delete()
+    redirect(URL('default','homepage'))
+    return dict()
 

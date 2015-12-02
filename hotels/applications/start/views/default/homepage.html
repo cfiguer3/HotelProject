@@ -3,25 +3,42 @@
 <div id="target"></div>
 
 <script id="template" type="text/ractive">
-<h1>Hotel Finder</h1>
-    <div class="boardListing">
-        <h2>Slug hotel</h2>
-        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
-        {{=A('view',_href=URL('default', 'hotelrooms'))}}
-    </div>
-    <br>
-    <div class="boardListing">
-        <h2>Beach INN</h2>
-        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
-        {{=A('view',_href=URL('default', 'hotelrooms'))}}
-    </div>
-    <br>
-    <div class="boardListing">
-        <h2>Downtown hotel</h2>
-        {{=A('expand', _class='btn btn-success',_href=URL('default'))}}
-        {{=A('view',_href=URL('default', 'hotelrooms'))}}
-    </div>
+<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','homepage'))}}</font><br>
 
+ {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
+ {{if auth.user_id is None:}}
+ {{=A('Log in', _class='btn btn-success',_href=URL('default','user',args=['login']))}}
+ {{=A('Sign up', _class='btn btn-primary',_href=URL('default','user',args=['register']))}}
+ {{pass}}
+ <br><br>
+
+ <div id="write_Hotel" style="display: none">
+     {{=form}}
+     <a class="btn btn-success" id="Hotel_hide">Hide</a>
+</div>
+ <div id="write_Hotel_area">
+     <a class="btn btn-success" id="button_Hotel">New Hotel</a>
+</div>
+
+<br>
+<table class="HotelList">
+   {{for hotel in hotel_list:}}
+    <tr>
+        <h2 class="hotelName">{{=hotel.Name}}</h2>
+             <div class="view"><a href="hotelrooms/{{=hotel.id}}">view</a></div>
+        <div class="info" id="write_msg" style="display: none">
+             <p>Phone number: {{=hotel.Phone_number}}<p>
+             <p>Address: {{=hotel.Address}}</p>
+             <p>{{=hotel.Description}}</p>
+             <a class="btn btn-success" id="button_hide">Hide</a>
+        </div>
+        <div class="info" id="write_button_area">
+            <a class="btn btn-primary" id="button_expand">Expand</a>
+        </div>
+    </tr>
+    <br>
+    {{pass}}
+    </table>
 </script>
 
 <script>
@@ -33,9 +50,107 @@ $(function() {
         delimiters: ['{%', '%}'],
         tripleDelimiters: ['{%%', '%%}'],
         data: {
-
-        },
+            Hotel_list: [],
+            Hotel: "",
+            author: "{{=auth.user_id}}",
+            active_draft: "",
+            draft_phone: "",
+            draftName: "",
+            loading: true
+        }
     });
+
+  MAIN.on("addHotel", function(e) {
+      var t = $(e.original.target); // This is the button on which we clicked.
+      var id = MAIN.get('Hotel');
+      var msg_content = MAIN.get('active_draft');
+      var phoneNum = MAIN.get('draft_phone');
+      var name = MAIN.get('draftName');
+      if ($.trim(msg_content).length >= 0) {
+          // Send content back to server.  false = message is not a draft.
+          Insert_Hotel(generateUUID(), phoneNum, 0, msg_content, name);
+          MAIN.set('active_draft', '');
+          MAIN.set('active_draft2', '');
+    }
+    return false;
+  });
+
+    function Insert_Hotel(ID, Number, rooms, address, name, descrip) {
+    $.ajax("{{=URL('default', 'add_hotel', user_signature=True)}}",
+            {
+              data: {
+                  hotel_id: ID,
+                  Phone_number: Number,
+                  Available_rooms: rooms,
+                  Address:address,
+                  Name: name,
+                  Description: descrip
+              },
+              method: 'POST',
+              success: function() {
+                // Reflect in the list of drafts or messages the update sent to the server.
+                var Hotel_List = MAIN.get('Hotel_List');
+                if (ID in Hotel_List) {
+                  // We have sent to the server a message/draft we have already in the dict.
+                  Hotel_List[ID]['hotel_id'] = ID;
+                  Hotel_List[ID]['Phone_number'] = Number;
+                  Hotel_List[ID]['Available_rooms'] = rooms;
+                  Hotel_List[ID]['Address'] = address;
+                  Hotel_List[ID]['Name'] = name;
+                  Hotel_List[ID]['Description'] = descrip;
+                } else {
+                  // This is a new message or draft.  We have to create a new entry in the dict.
+                  Hotel_List[ID] = {
+                  hotel_id: ID,
+                  Phone_number: Number,
+                  Available_rooms: rooms,
+                  Address:address,
+                  Name: name,
+                  Description: descrip
+                  }
+                }
+                MAIN.set('Hotel_List', Hotel_List);
+              },
+              error: function() {}
+            }
+    );
+  }
+
+  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  function generateUUID(){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+        d += performance.now();; //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
+});
+
+$(function() {
+  $("#button_expand").click(function(e) {
+    $("#write_msg").slideDown();
+    $("#write_button_area").hide();
+  });
+  $("#button_hide").click(function(e) {
+    $("#write_msg").slideUp();
+    $("#write_button_area").show();
+  })
+});
+
+$(function() {
+  $("#button_Hotel").click(function(e) {
+    $("#write_Hotel").slideDown();
+    $("#write_Hotel_area").hide();
+  });
+  $("#Hotel_hide").click(function(e) {
+    $("#write_Hotel").slideUp();
+    $("#write_Hotel_area").show();
+  })
 });
 
 </script>

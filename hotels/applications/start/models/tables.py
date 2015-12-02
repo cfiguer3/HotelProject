@@ -19,11 +19,11 @@ from datetime import datetime
 
 #table for user posts
 db.define_table('Hotels',
-                Field('hotel_id'),
-                Field('Phone_number'),
+                Field('Name', 'text', required=True),
+                Field('Phone_number', required=True),
                 Field('Available_rooms', 'integer', default=0),
-                Field('Address', 'text'),
-                Field('Name', 'text'))
+                Field('Address', 'text', required=True),
+                Field('Description', 'text'))
 
 db.define_table('Bedroom',
                 Field('room_id'),
@@ -36,11 +36,19 @@ db.define_table('Bedroom',
                 Field('Hotel_ID', 'reference Hotels'),
                 Field('reservation', 'datetime'))
 
-db.define_table('Ammenities',
+db.define_table('Amenities',
                 Field('wifi', 'integer'),
                 Field('standard_breakfast', 'integer'),
                 Field('cable', 'integer'),
                 Field('premium_breakfast', 'integer'),
                 Field('lunchAndDinner', 'integer'))
 
-db.bedroom.reservation.default = datetime.utcnow()
+db.define_table('Patron',
+                Field('Address', 'text', required=True),
+                Field('City', 'text', required=True),
+                Field('Zip', 'integer', requires=IS_INT_IN_RANGE(5, 5)),
+                Field('CreditCardNum', 'integer', requires=IS_INT_IN_RANGE(16, 16))
+                )
+
+db.Bedroom.DateStart.default = datetime.utcnow()
+db.Bedroom.DateEnd.default = datetime.utcnow()
