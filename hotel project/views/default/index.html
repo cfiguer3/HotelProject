@@ -1,0 +1,110 @@
+{{extend 'layout.html'}}
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','index'))}}</font><br>
+
+ {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
+ {{if auth.user_id is None:}}
+ {{=A('Log in', _class='btn btn-success',_href=URL('default','user',args=['login']))}}
+ {{=A('Sign up', _class='btn btn-primary',_href=URL('default','user',args=['register']))}}
+ {{pass}}
+ <br><br>
+
+ <div id="write_Hotel" style="display: none">
+     {{=form}}
+     <a class="btn btn-success" id="Hotel_hide">Hide</a>
+</div>
+
+{{if auth.user is not None:}}
+{{if auth.user['email'] in Admins:}}
+ <div id="write_Hotel_area">
+     <a class="btn btn-success" id="button_Hotel">New Hotel</a>
+</div>
+{{pass}}
+{{pass}}
+
+<br>
+<table class="HotelList">
+   {{for hotel in hotel_list:}}
+    <tr>
+        <h2 class="hotelName">{{=hotel.Name}}</h2>
+        {{=A('view', _href=URL('default','hotelrooms',args=[hotel['id']]))}}
+        <div class="info" id="write_msg" style="display: none">
+             <p>Phone number: {{=hotel.Phone_number}}<p>
+             <p>Address: {{=hotel.Address}}</p>
+             <p>{{=hotel.Description}}</p>
+             <div class= "hidebtn"><a class="btn btn-success" id="button_hide">Hide</a></div>
+        </div>
+        <div class="info2" id="write_button_area">
+            <a class="btn btn-primary" id="expand_button">Expand</a>
+        </div>
+    </tr>
+    <br>
+    {{pass}}
+</table>
+
+</script>
+
+<script>
+$(function() {
+    // Ractive object
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+            Hotel_list: [],
+            Hotel: "",
+            author: "{{=auth.user_id}}",
+            active_draft: "",
+            draft_phone: "",
+            draftName: "",
+            loading: true
+        }
+    });
+
+
+  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+  function generateUUID(){
+    var d = new Date().getTime();
+    if(window.performance && typeof window.performance.now === "function"){
+        d += performance.now();; //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
+
+  $(function() {
+  $(".info2").click(function(e) {
+    $(this).siblings(".info").slideDown();
+    $(this).hide();
+  });
+  $(".hidebtn").click(function(e) {
+    $(this).parent().slideUp();
+    $(this).parent().siblings(".info2").show();
+  })
+});
+
+$(function() {
+  $("#button_Hotel").click(function(e) {
+    $("#write_Hotel").slideDown();
+    $("#write_Hotel_area").hide();
+  });
+  $("#Hotel_hide").click(function(e) {
+    $("#write_Hotel").slideUp();
+    $("#write_Hotel_area").show();
+  })
+});
+
+});
+
+
+
+</script>

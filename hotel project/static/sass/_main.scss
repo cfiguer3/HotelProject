@@ -1,0 +1,68 @@
+.colorful {
+  color: $clrHilight;
+}
+
+table.HotelList{
+
+  .boardListing {
+    padding: 20px;
+    @include background-image(linear-gradient(lighten($clrListBg, 10%), $clrListBg));
+    margin: 5px;
+    border: 3px solid $clrText;
+    //@include box-shadow(rgba(#000,0.7) 0 4px 10px 2px);
+    display: inline-block;
+  }
+  .hotelName{
+    padding: 40px;
+    font-size: 3.5em;
+    font-family: Palatino, serif;
+  }
+    .descrip{
+      padding: 30px;
+      white-space: pre-line;
+    }
+    .boardTitle {
+      padding: 40px;
+      font-family: Palatino, serif;
+      font-size: 3.0em;
+      color: $clrMain;
+    }
+    .boardLink {
+      padding: 40px;
+      font-size: 0.5em;
+      color: #0000C0;
+    }
+
+    .info{
+      padding: 10px;
+      font-size: 1.5em;
+    }
+    .view{
+      padding: 10px;
+      font-size: 2.5em;
+      color: #0000C0;
+    }
+
+  div.postListing {
+    padding: 20px;
+    @include background-image(linear-gradient(lighten($clrListBg, 10%), $clrListBg));
+    margin: 5px;
+    border: 8px solid $clrText;
+    //@include box-shadow(rgba(#000,0.7) 0 4px 10px 2px);
+    display: inline-block;
+
+    .descrip{
+      white-space: pre-line;
+      font-size: 0.9em;
+    }
+    .postTitle {
+      font-family: Helevtica, serif;
+      font-size: 1.9em;
+      color: $clrMain;
+    }
+  }
+
+  h1.Title{
+    font-family: Courier, serif;
+  }
+}
