@@ -21,19 +21,19 @@ from datetime import datetime
 db.define_table('Hotels',
                 Field('Name', 'text', required=True),
                 Field('Phone_number', required=True),
-                Field('Available_rooms', 'integer', default=0),
+                Field('Available_rooms', 'integer', default=0, requires=IS_INT_IN_RANGE(0, 500)),
                 Field('Address', 'text', required=True),
                 Field('Description', 'text'))
 
 db.define_table('Bedroom',
-                Field('room_id'),
+                Field('room_id', readable=False, writable=False),
                 Field('Beds', 'integer'),
                 Field('Availability', 'boolean'),
                 Field('DateStart', 'datetime'),
                 Field('DateEnd', 'datetime'),
                 Field('Price'),
                 Field('Description', 'text'),
-                Field('Hotel_ID', 'reference Hotels'),
+                Field('Hotel_ID', 'reference Hotels', readable=False, writable=True),
                 Field('reservation', 'datetime'))
 
 db.define_table('Amenities',
@@ -41,7 +41,8 @@ db.define_table('Amenities',
                 Field('standard_breakfast', 'integer'),
                 Field('cable', 'integer'),
                 Field('premium_breakfast', 'integer'),
-                Field('lunchAndDinner', 'integer'))
+                Field('lunchAndDinner', 'integer'),
+                Field('Bed', 'reference Bedroom'))
 
 db.define_table('Patron',
                 Field('Address', 'text', required=True),

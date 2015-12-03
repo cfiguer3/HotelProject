@@ -8,9 +8,23 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 #########################################################################
 
-def hotelrooms():
 
-    return dict()
+def hotelrooms():
+    entry = db.Hotels(request.args(0))
+    Admins = ["manager@gmail.com"]
+    form = SQLFORM(db.Bedroom)
+    form.vars.Hotel_ID = request.args(0)
+    form.add_button('Cancel', URL('default', 'index'))
+    if form.process().accepted:
+        session.flash = T('data was inserted')
+        redirect(URL('default', 'hotelrooms', args=entry.id))
+    elif form.errors:
+        response.flash = 'form has errors'
+
+    q = db.Bedroom.Hotel_ID == request.args(0)
+    query = db(q).select(db.Bedroom.ALL)
+
+    return dict(entry=entry, query=query, q=q, form=form, Admins=Admins)
 
 
 def checkout():
@@ -20,27 +34,28 @@ def checkout():
 
 def homepage():
     form = SQLFORM(db.Hotels)
-    form.add_button('Cancel', URL('default', 'homepage'))
+    form.add_button('Cancel', URL('default', 'index'))
     if form.process().accepted:
         session.flash = T('data was inserted')
-        redirect(URL('default', 'homepage'))
+        redirect(URL('default', 'index'))
     elif form.errors:
         response.flash = 'form has errors'
     hotel_list = db(db.Hotels).select(orderby=db.Hotels.Name)
     return dict(hotel_list=hotel_list, form=form)
-
 
 
 def index():
+    Admins = ["manager@gmail.com"]
     form = SQLFORM(db.Hotels)
-    form.add_button('Cancel', URL('default', 'homepage'))
+    form.add_button('Cancel', URL('default', 'index'))
     if form.process().accepted:
         session.flash = T('data was inserted')
-        redirect(URL('default', 'homepage'))
+        redirect(URL('default', 'index'))
     elif form.errors:
         response.flash = 'form has errors'
     hotel_list = db(db.Hotels).select(orderby=db.Hotels.Name)
-    return dict(hotel_list=hotel_list, form=form)
+
+    return dict(hotel_list=hotel_list, form=form, Admins=Admins)
 
 
 def user():
@@ -84,6 +99,6 @@ def call():
 
 def refresh():
     db(db.Hotels.id > 0).delete()
-    redirect(URL('default','homepage'))
+    redirect(URL('default', 'index'))
     return dict()
 

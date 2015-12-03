@@ -3,21 +3,39 @@
 <div id="target"></div>
 
 <script id="template" type="text/ractive">
-<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','homepage'))}}</font><br>
+<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','index'))}}</font><br>
 
-<h1></h1><br>
-<h4>Name</h4>
+
+ {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
+ {{if auth.user_id is None:}}
+ {{=A('Log in', _class='btn btn-success',_href=URL('default','user',args=['login']))}}
+ {{=A('Sign up', _class='btn btn-primary',_href=URL('default','user',args=['register']))}}
+ {{pass}}
+ <br><br>
+
+  <div id="write_Hotel" style="display: none">
+     {{=form}}
+     <a class="btn btn-success" id="Hotel_hide">Hide</a>
+</div>
+
+{{if auth.user is not None:}}
+{{if auth.user['email'] in Admins:}}
+ <div id="write_Hotel_area">
+     <a class="btn btn-success" id="button_Hotel">New Room</a>
+</div>
+{{pass}}
+{{pass}}
+<br>
+<h2>{{=entry.Name}}</h2>
+
+{{for room in query:}}
     <div class="boardListing">
-        <h2></h2>
+        <h2>{{=room.Beds}}</h2>
+        <p>{{=room.Description}}</p>
+        <p>{{=room.Price}}</p>
+        {{=A(I(_class='fa fa-calendar'))}}
     </div>
-    <br>
-    <div class="boardListing">
-        <h2></h2>
-    </div>
-    <br>
-    <div class="boardListing">
-        <h2></h2>
-    </div>
+{{pass}}
 
 </script>
 
@@ -33,5 +51,16 @@ $(function() {
 
         },
     });
+});
+
+    $(function() {
+  $("#button_Hotel").click(function(e) {
+    $("#write_Hotel").slideDown();
+    $("#write_Hotel_area").hide();
+  });
+  $("#Hotel_hide").click(function(e) {
+    $("#write_Hotel").slideUp();
+    $("#write_Hotel_area").show();
+  })
 });
 </script>

@@ -3,7 +3,7 @@
 <div id="target"></div>
 
 <script id="template" type="text/ractive">
-<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','homepage'))}}</font><br>
+<font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','index'))}}</font><br>
 
  {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
  {{if auth.user_id is None:}}
@@ -16,29 +16,34 @@
      {{=form}}
      <a class="btn btn-success" id="Hotel_hide">Hide</a>
 </div>
+
+{{if auth.user is not None:}}
+{{if auth.user['email'] in Admins:}}
  <div id="write_Hotel_area">
      <a class="btn btn-success" id="button_Hotel">New Hotel</a>
 </div>
+{{pass}}
+{{pass}}
 
 <br>
 <table class="HotelList">
    {{for hotel in hotel_list:}}
     <tr>
         <h2 class="hotelName">{{=hotel.Name}}</h2>
-             <div class="view"><a href="hotelrooms/{{=hotel.id}}">view</a></div>
+        {{=A('view', _href=URL('default','hotelrooms',args=[hotel['id']]))}}
         <div class="info" id="write_msg" style="display: none">
              <p>Phone number: {{=hotel.Phone_number}}<p>
              <p>Address: {{=hotel.Address}}</p>
              <p>{{=hotel.Description}}</p>
-             <a class="btn btn-success" id="button_hide">Hide</a>
+             <div class= "hidebtn"><a class="btn btn-success" id="button_hide">Hide</a></div>
         </div>
-        <div class="info" id="write_button_area">
-            <a class="btn btn-primary" id="button_expand">Expand</a>
+        <div class="info2" id="write_button_area">
+            <a class="btn btn-primary" id="expand_button">Expand</a>
         </div>
     </tr>
     <br>
     {{pass}}
-    </table>
+</table>
 
 </script>
 
@@ -75,16 +80,15 @@ $(function() {
     });
     return uuid;
   }
-});
 
-$(function() {
-  $("#button_expand").click(function(e) {
-    $("#write_msg").slideDown();
-    $("#write_button_area").hide();
+  $(function() {
+  $(".info2").click(function(e) {
+    $(this).siblings(".info").slideDown();
+    $(this).hide();
   });
-  $("#button_hide").click(function(e) {
-    $("#write_msg").slideUp();
-    $("#write_button_area").show();
+  $(".hidebtn").click(function(e) {
+    $(this).parent().slideUp();
+    $(this).parent().siblings(".info2").show();
   })
 });
 
@@ -98,5 +102,9 @@ $(function() {
     $("#write_Hotel_area").show();
   })
 });
+
+});
+
+
 
 </script>
