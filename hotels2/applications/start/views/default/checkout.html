@@ -1,0 +1,26 @@
+{{extend 'layout.html'}}
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+
+<h1>{{=A('Hotel Finder', _href=URL('default','index'))}}</h1>
+
+
+</script>
+
+<script>
+$(function() {
+    // Ractive object
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+
+        },
+    });
+});
+
+</script>
