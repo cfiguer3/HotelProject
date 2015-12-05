@@ -7,12 +7,16 @@
 
 
  {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
+  <!--If there is no user give them the option to sign up or log in-->
  {{if auth.user_id is None:}}
  {{=A('Log in', _class='btn btn-success',_href=URL('default','user',args=['login']))}}
  {{=A('Sign up', _class='btn btn-primary',_href=URL('default','user',args=['register']))}}
+ {{else:}}
+ <a href={{=URL('default', 'checkout')}}>{{=I(_class='fa fa-shopping-cart')}}</a>
  {{pass}}
  <br><br>
 
+<!--Only a specific users in the list of approved emails can add more rooms-->
   <div id="write_Hotel" style="display: none">
      {{=form}}
      <a class="btn btn-success" id="Hotel_hide">Hide</a>
@@ -26,16 +30,153 @@
 {{pass}}
 {{pass}}
 <br>
+
 <h2>{{=entry.Name}}</h2>
 
+<form>
+<input data-id="wifitrue" type="checkbox" name="wi-fi" value="WIFI" on-click="wantWifi"> wi-fi
+<input type="checkbox" name="Cable" value="cable" on-click="wantCable"> Cable
+<input type="checkbox" name="1Bed" value="1bed" on-click="oneBed"> 1 bed
+<input type="checkbox" name="2Bed" value="2bed" on-click="twoBed"> 2 bed
+<input type="checkbox" name="SBreakfast" value="standBreakfast" on-click="SB"> Standard Breakfast
+<input type="checkbox" name="PBreakfast" value="premBreakfast" on-click="PB"> Premium Breakfast
+<input type="checkbox" name="LunchDinner" value="LandD" on-click="LD"> lunch and dinner
+</form>
+
+<!--Loop through the list of rooms to select more options-->
 {{for room in query:}}
+   {% #if oneBed==false && twoBed==false && wantWifi==false && wantCable==false && SB==false && PB==false && LD==false %}
     <div class="boardListing">
-        <h2>{{=room.Beds}}</h2>
-        <p>{{=room.Description}}</p>
-        <p>{{=room.Price}}</p>
-        {{=A(I(_class='fa fa-times'))}}
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <p>wifi: {{=room.wifi}}</p>
+        <p>cable: {{=room.cable}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
     </div>
+    {% /if %}
+    {% #if  (oneBed && {{=room.Beds}} == 1) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  (twoBed && {{=room.Beds}} == 2) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  (wantCable && {{=room.cable}} == 1) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  wantWifi && ({{=room.wifi}} ===True) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  (SB && {{=room.standard_breakfast}}===True) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  (LD && {{=room.lunchAndDinner}}===True) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
+    {% #if  (PB && {{=room.premium_breakfast}}===true) %}
+        <div class="boardListing">
+        <h2>Beds: {{=room.Beds}}</h2>
+        <p>Description: {{=room.Description}}</p>
+        <p>Rate per night: {{=room.Price}}</p>
+        <!--See and select the available days for that particular room-->
+        {% #if pickingDate %}
+            {{=form2}}
+            <a role="button" on-click="doneDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% else %}
+            <a role="button" on-click="availableDates">{{=I(_class='fa fa-calendar')}}</a>
+        {% /if %}
+        <!--Add this room and dates to the user cart-->
+        <a role="button" on-click="bookRoom">{{=I(_class='fa fa-plus')}}</a>
+    </div>
+    {% /if %}
 {{pass}}
+<br><br>
 
 </script>
 
@@ -48,8 +189,88 @@ $(function() {
         delimiters: ['{%', '%}'],
         tripleDelimiters: ['{%%', '%%}'],
         data: {
+            pickingDate: false,
+            wantWifi: false,
+            oneBed: false,
+            twoBed: false,
+            wantCable: false,
+            SB: false,
+            PB: false,
+            LD: false
+        }
+    });
 
-        },
+   //show the available dates of the room
+    //highlighted for available, lowlighted for booked
+    MAIN.on("availableDates", function(e) {
+        MAIN.set('pickingDate', true)
+      });
+
+
+    MAIN.on("doneDates", function(e) {
+        MAIN.set('pickingDate', false)
+      });
+
+    //change the rooms you see by checking
+    // boxes and seeing what is true and false
+    MAIN.on("wantWifi", function(e) {
+            var v = MAIN.get('wantWifi');
+            if(v == false)
+             MAIN.set('wantWifi', true);
+            else
+            MAIN.set('wantWifi', false);
+      });
+
+    MAIN.on("wantCable", function(e) {
+            var v = MAIN.get('wantCable');
+            if(v == false)
+             MAIN.set('wantCable', true);
+            else
+            MAIN.set('wantCable', false);
+      });
+
+    MAIN.on("oneBed", function(e) {
+            var v = MAIN.get('oneBed');
+            if(v == false)
+             MAIN.set('oneBed', true);
+            else
+            MAIN.set('oneBed', false);
+      });
+
+    MAIN.on("twoBed", function(e) {
+            var v = MAIN.get('twoBed');
+            if(v == false)
+             MAIN.set('twoBed', true);
+            else
+            MAIN.set('twoBed', false);
+      });
+
+    MAIN.on("SB", function(e) {
+            var v = MAIN.get('SB');
+            if(v == false)
+             MAIN.set('SB', true);
+            else
+            MAIN.set('SB', false);
+      });
+
+    MAIN.on("PB", function(e) {
+            var v = MAIN.get('PB');
+            if(v == false)
+             MAIN.set('PB', true);
+            else
+            MAIN.set('PB', false);
+      });
+
+    MAIN.on("LD", function(e) {
+            var v = MAIN.get('LD');
+            if(v == false)
+             MAIN.set('LD', true);
+            else
+            MAIN.set('LD', false);
+      });
+
+    //add the particular room to your cart
+    MAIN.on("bookRoom", function(e) {
     });
 });
 

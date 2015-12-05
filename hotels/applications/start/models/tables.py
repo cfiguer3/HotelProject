@@ -33,8 +33,17 @@ db.define_table('Bedroom',
                 Field('DateEnd', 'datetime'),
                 Field('Price'),
                 Field('Description', 'text'),
-                Field('Hotel_ID', 'reference Hotels', readable=False, writable=True),
-                Field('reservation', 'datetime'))
+                Field('Hotel_ID', 'reference Hotels', readable=False, writable=False),
+                Field('reservation', 'datetime'),
+                Field('wifi', 'boolean'),
+                Field('standard_breakfast', 'boolean'),
+                Field('cable', 'boolean'),
+                Field('premium_breakfast', 'boolean'),
+                Field('lunchAndDinner', 'boolean'))
+
+db.define_table('Dates',
+                Field('DateStart', 'datetime', requires=IS_DATE),
+                Field('DateEnd', 'datetime', requires=IS_DATE),)
 
 db.define_table('Amenities',
                 Field('wifi', 'integer'),

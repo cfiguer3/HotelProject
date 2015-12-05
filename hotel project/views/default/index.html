@@ -3,15 +3,20 @@
 <div id="target"></div>
 
 <script id="template" type="text/ractive">
+
 <font size="20" face="verdanda">{{=A('Hotel Finder',_href=URL('default','index'))}}</font><br>
 
  {{=A('Refresh', _class='btn btn-danger',_href=URL('default','refresh'))}}
+ <!--If there is no user give them the option to sign up or log in-->
  {{if auth.user_id is None:}}
  {{=A('Log in', _class='btn btn-success',_href=URL('default','user',args=['login']))}}
  {{=A('Sign up', _class='btn btn-primary',_href=URL('default','user',args=['register']))}}
+ {{else:}}
+ <a href={{=URL('default', 'checkout')}}>{{=I(_class='fa fa-shopping-cart')}}</a>
  {{pass}}
  <br><br>
 
+<!--Only a specific users in the list of approved emails can add more hotels-->
  <div id="write_Hotel" style="display: none">
      {{=form}}
      <a class="btn btn-success" id="Hotel_hide">Hide</a>
@@ -56,7 +61,7 @@ $(function() {
         delimiters: ['{%', '%}'],
         tripleDelimiters: ['{%%', '%%}'],
         data: {
-            Hotel_list: [],
+            Hotel_list: {},
             Hotel: "",
             author: "{{=auth.user_id}}",
             active_draft: "",
@@ -67,6 +72,16 @@ $(function() {
     });
 
 
+      //load initial list of hotels
+    $.ajax("{{=URL('default','load_hotels')}}",
+            {
+                method: 'POST',
+                success: function(data) {
+                    MAIN.set('Hotel_list', data['Hotel_list']);
+                    MAIN.set('loading', false);
+                }
+            }
+    );
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
   function generateUUID(){
     var d = new Date().getTime();
@@ -104,7 +119,5 @@ $(function() {
 });
 
 });
-
-
 
 </script>

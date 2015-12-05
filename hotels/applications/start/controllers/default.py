@@ -13,6 +13,7 @@ def hotelrooms():
     entry = db.Hotels(request.args(0))
     Admins = ["manager@gmail.com"]
     form = SQLFORM(db.Bedroom)
+    form2 = SQLFORM(db.Dates)
     form.vars.Hotel_ID = request.args(0)
     form.add_button('Cancel', URL('default', 'index'))
     if form.process().accepted:
@@ -24,11 +25,15 @@ def hotelrooms():
     q = db.Bedroom.Hotel_ID == request.args(0)
     query = db(q).select(db.Bedroom.ALL)
 
-    return dict(entry=entry, query=query, q=q, form=form, Admins=Admins)
+    return dict(entry=entry, query=query, q=q, form=form, Admins=Admins, form2=form2)
 
 
 def checkout():
 
+    return dict()
+
+
+def default():
     return dict()
 
 
@@ -56,6 +61,19 @@ def index():
     hotel_list = db(db.Hotels).select(orderby=db.Hotels.Name)
 
     return dict(hotel_list=hotel_list, form=form, Admins=Admins)
+
+
+def load_hotels():
+    """loads all hotels for the page"""
+    rows = db(db.Hotels).select()
+    d = {}
+    for r in rows:
+        d[r.id] = {'Name': r.Name,
+                   'Phone_number': r.Phone_number,
+                   'Available_rooms': r.Available_rooms,
+                   'Address': r.Address,
+                   'Description': r.Description}
+    return response.json(dict(Hotel_list=d))
 
 
 def user():
